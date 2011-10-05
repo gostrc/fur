@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block body %}
+        <p>
+            Name: <b>{{ package["name"] }}</b> {{ package["version"] }}-{{ package["release"] }}
+        </p>
+        <p>
+            {% if package["outdated"] %}
+            outdated since {{ package["outdated_since"] }}
+            {% endif %}
+        </p>
+        <p>Url: <a href="{{ package["url"] }}">{{ package["url"] }}</a></p>
+        <p>Description: {{ package["summary"] }}</p>
+        <p>Submitter: {{ package["submitter"] }}</p>
+        <p>Maintainer: {{ package["maintainer"] }}</p>
+        <p>License: {{ package["license"] }}</p>
+        <p>Submitted: {{ package["submitted"] }}</p>
+        <p>Updated: {{ package["updated"] }}</p>
+        <p> Most Recent Change: {{ package["changelogtext"] }}</p>
+        <p><a href="{{ url_for('download_file', package_name=package['name'], filename=package['filename']) }}">Download spec</a></p>
+
+        {% if session.username %}
+        <form method="post">
+            {% if package["maintainer"] == "orphan" %}
+                <input type="submit" name="do_adopt" value="adopt" />
+            {% elif session.username == package["maintainer"] %}
+                <input type="submit" name="do_disown" value="disown" />
+            {% endif %}
+            {% if package["outdated"] %}
+                <input type="submit" name="do_toggle_outdated" value="unflag as outdated" />
+            {% else %}
+                <input type="submit" name="do_toggle_outdated" value="flag as outdated" />
+            {% endif %}
+        </form>
+        
+        <form method="post">
+            <textarea cols="80" rows="5" name="new_comment"></textarea><br />
+            <input type="submit" name="do_comment" value="comment" />
+        </form>
+        {% endif %}
+        {% for comment in package["comments"] %}
+        <p>
+            Submitted By: {{ comment["submitter"] }} on {{ comment["date"] }}<br />
+            {{ comment["comment"].replace("\n","<br \>")|safe }}
+        </p>
+        {% endfor %}
+{% endblock %}

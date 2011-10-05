@@ -1,0 +1,30 @@
+<!doctype html>
+<title>fur</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flash>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <div class=metanav>
+        <div class="alignleft">
+            <b><a href="{{ url_for('index') }}">Fedoraur</a></b> |
+        {% if not session.username %}
+            <a href="{{ url_for('login') }}">Log in</a> or <a href="{{ url_for('register') }}">register</a>
+        {% else %}
+            <a href="{{ url_for('upload_package') }}">upload</a> | Logged in as {{ session.username }}, <a href="{{ url_for('logout') }}">log out</a>
+        {% endif %}
+        </div>
+
+        <form action="/search" method="post">
+            <input type="text" name="search_box"/>
+            <input type="submit" value="search"/>
+        </form>
+    </div>
+    {% block body %}{% endblock %}
+</div>

@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block body %}
+        <p>Found {{ packages.count() }} packages.</p>
+        Search results:<br />
+        <table>
+        {% set row_class = cycler("row1", "row2") %}
+        {% for package in packages %}
+            <tr class="{{ row_class.next() }}">
+                <td><a href="{{ url_for('packages', package_name=package['name']) }}">{{ package["name"] }}</a></td>
+            </tr>
+        {% endfor %}
+        </table>
+{% endblock %}
